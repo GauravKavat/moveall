@@ -16,37 +16,45 @@ import {
   Bell,
   CircleUser,
   Search,
+  Menu,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ThemeToggle } from '@/components/dashboard/theme-toggle';
-import { searchAllEntities } from '@/lib/global-search';
+import type { GlobalSearchResult } from '@/lib/global-search';
 import { toast } from '@/hooks/use-toast';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/dashboard/orders', label: 'Orders', icon: Package },
-  { href: '/dashboard/pickups', label: 'Pickups', icon: ArrowUpRight },
-  { href: '/dashboard/shipments', label: 'Shipments', icon: Truck },
-  { href: '/dashboard/exceptions', label: 'Exceptions', icon: AlertCircle },
-  { href: '/dashboard/rto', label: 'RTO', icon: RotateCcw },
-  { href: '/dashboard/couriers', label: 'Couriers', icon: Users },
-  { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
-  { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
-  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/orders', label: 'Orders', icon: Package },
+  { href: '/pickups', label: 'Pickups', icon: ArrowUpRight },
+  { href: '/shipments', label: 'Shipments', icon: Truck },
+  { href: '/exceptions', label: 'Exceptions', icon: AlertCircle },
+  { href: '/rto', label: 'RTO', icon: RotateCcw },
+  { href: '/couriers', label: 'Couriers', icon: Users },
+  { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/billing', label: 'Billing', icon: CreditCard },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<GlobalSearchResult[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
   const userMenuRef = useRef<HTMLDivElement>(null);
   const searchRef = useRef<HTMLDivElement>(null);
-
-  const searchResults = useMemo(() => searchAllEntities(searchQuery, 10), [searchQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -62,6 +70,27 @@ export function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    const query = searchQuery.trim();
+
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
+
+    let isCurrent = true;
+
+    import('@/lib/global-search').then(({ searchAllEntities }) => {
+      if (isCurrent) {
+        setSearchResults(searchAllEntities(query, 10));
+      }
+    });
+
+    return () => {
+      isCurrent = false;
+    };
+  }, [searchQuery]);
+
   const handleSearchSelect = (href: string, label: string) => {
     router.push(href);
     setSearchQuery(label);
@@ -73,15 +102,23 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-card">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+    <header className="sticky top-0 z-40 w-full max-w-full overflow-hidden border-b border-border bg-card">
+      <div className="w-full px-3 sm:px-6 lg:px-8">
+        <div className="flex h-20 min-w-0 items-center justify-between gap-2 sm:gap-3">
+          <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+            <button
+              type="button"
+              className="rounded-lg p-2 transition-colors hover:bg-muted md:hidden"
+              onClick={() => setIsMobileNavOpen(true)}
+              aria-label="Open navigation"
+            >
+              <Menu className="h-5 w-5 text-muted-foreground" />
+            </button>
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary sm:h-10 sm:w-10">
               <span className="text-lg font-bold text-primary-foreground">M</span>
             </div>
-            <div>
-              <h1 className="text-lg font-bold text-foreground">Move All</h1>
+            <div className="min-w-0">
+              <h1 className="truncate text-base font-bold text-foreground sm:text-lg">Move All</h1>
               <p className="text-xs text-muted-foreground">Logistics</p>
             </div>
           </div>
@@ -136,7 +173,7 @@ export function Header() {
             )}
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex flex-shrink-0 items-center gap-1 sm:gap-3">
             <button
               className="rounded-lg p-2 transition-colors hover:bg-muted md:hidden"
               onClick={() =>
@@ -146,7 +183,7 @@ export function Header() {
                 })
               }
             >
-              <Search className="h-5 w-5 text-muted-foreground" />
+              <Search className="h-4 w-4 text-muted-foreground sm:h-5 sm:w-5" />
             </button>
 
             <button
@@ -158,7 +195,7 @@ export function Header() {
                 })
               }
             >
-              <Bell className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-foreground" />
+              <Bell className="h-4 w-4 text-muted-foreground transition-colors group-hover:text-foreground sm:h-5 sm:w-5" />
               <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-accent"></span>
             </button>
 
@@ -169,14 +206,14 @@ export function Header() {
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="rounded-lg p-2 transition-colors hover:bg-muted"
               >
-                <CircleUser className="h-5 w-5 text-muted-foreground transition-colors hover:text-foreground" />
+                <CircleUser className="h-4 w-4 text-muted-foreground transition-colors hover:text-foreground sm:h-5 sm:w-5" />
               </button>
 
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-2 w-52 rounded-lg border border-border bg-card shadow-lg">
                   <button
                     onClick={() => {
-                      router.push('/dashboard/settings');
+                      router.push('/settings');
                       setIsUserMenuOpen(false);
                     }}
                     className="w-full rounded-t-lg px-4 py-2.5 text-left text-sm text-foreground hover:bg-muted"
@@ -185,7 +222,7 @@ export function Header() {
                   </button>
                   <button
                     onClick={() => {
-                      router.push('/dashboard/settings');
+                      router.push('/settings');
                       setIsUserMenuOpen(false);
                     }}
                     className="w-full px-4 py-2.5 text-left text-sm text-foreground hover:bg-muted"
@@ -211,20 +248,20 @@ export function Header() {
         </div>
       </div>
 
-      <div className="border-t border-border/50">
-        <div className="w-full px-4 sm:px-6 lg:px-8">
-          <div className="flex w-full items-center py-0">
+      <div className="hidden border-t border-border/50 md:block">
+        <div className="w-full overflow-x-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex min-w-max items-center py-0 md:min-w-0">
             {navItems.map((item) => {
               const isActive =
                 pathname === item.href ||
-                (item.href !== '/dashboard' && pathname.startsWith(item.href));
+                (item.href !== '/' && pathname.startsWith(item.href));
               const Icon = item.icon;
 
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex flex-1 items-center justify-center gap-2 border-b-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors ${
+                  className={`flex w-10 flex-none items-center justify-center gap-2 border-b-2 px-3 py-3 text-sm font-medium whitespace-nowrap transition-colors sm:w-12 md:w-auto md:flex-1 md:px-4 ${
                     isActive
                       ? 'border-accent text-foreground'
                       : 'border-transparent text-muted-foreground hover:bg-muted/20 hover:text-foreground'
@@ -238,6 +275,44 @@ export function Header() {
           </div>
         </div>
       </div>
+
+      <Sheet open={isMobileNavOpen} onOpenChange={setIsMobileNavOpen}>
+        <SheetContent
+          side="left"
+          className="bg-sidebar text-sidebar-foreground w-72 p-0 [&>button]:hidden"
+        >
+          <SheetHeader className="border-b border-sidebar-border px-4 py-5">
+            <SheetTitle className="text-white">Move All</SheetTitle>
+            <SheetDescription className="text-sidebar-foreground/80">
+              Logistics
+            </SheetDescription>
+          </SheetHeader>
+          <nav className="flex flex-col gap-1 px-3 py-4">
+            {navItems.map((item) => {
+              const isActive =
+                pathname === item.href ||
+                (item.href !== '/' && pathname.startsWith(item.href));
+              const Icon = item.icon;
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setIsMobileNavOpen(false)}
+                  className={`flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition-all ${
+                    isActive
+                      ? 'bg-accent text-accent-foreground shadow-lg shadow-accent/20'
+                      : 'text-sidebar-foreground hover:bg-sidebar-accent/50'
+                  }`}
+                >
+                  <Icon className="h-5 w-5 flex-shrink-0" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </SheetContent>
+      </Sheet>
     </header>
   );
 }

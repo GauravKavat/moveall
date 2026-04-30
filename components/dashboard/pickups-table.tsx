@@ -1,10 +1,16 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { PickupRequest, PickupStatus } from '@/lib/types';
 import { StatusBadge } from './status-badge';
 import { ChevronRight } from 'lucide-react';
 import { useState } from 'react';
-import { PickupDetailModal } from './pickup-detail-modal';
+
+const PickupDetailModal = dynamic(
+  () =>
+    import('./pickup-detail-modal').then((mod) => mod.PickupDetailModal),
+  { ssr: false },
+);
 
 interface PickupsTableProps {
   pickups: PickupRequest[];

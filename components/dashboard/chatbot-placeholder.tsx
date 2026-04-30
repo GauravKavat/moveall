@@ -64,7 +64,7 @@ export function ChatbotPlaceholder() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end sm:bottom-6 sm:right-6">
       {open && (
         <div
           className="relative mb-3 flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-lg"
@@ -122,7 +122,7 @@ export function ChatbotPlaceholder() {
 
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors"
+        className="flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-colors hover:bg-primary/90 sm:h-12 sm:w-12"
         aria-label="Toggle chatbot"
         title="Open assistant"
       >

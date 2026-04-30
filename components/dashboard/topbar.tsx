@@ -84,7 +84,7 @@ export function Topbar() {
                     Create Order
                   </button>
                   <Link
-                    href="/dashboard/pickups"
+                    href="/pickups"
                     onClick={() => setIsDropdownOpen(false)}
                     className="block w-full text-left px-4 py-2.5 hover:bg-muted text-sm text-foreground rounded-b-lg"
             >

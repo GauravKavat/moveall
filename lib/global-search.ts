@@ -35,7 +35,7 @@ export function searchAllEntities(query: string, limit = 8): GlobalSearchResult[
       title: o.customer,
       subtitle: `${o.id} • ${o.status}`,
       category: 'Order',
-      href: '/dashboard/orders',
+      href: '/orders',
     }));
 
   const shipmentResults: GlobalSearchResult[] = mockShipments
@@ -45,7 +45,7 @@ export function searchAllEntities(query: string, limit = 8): GlobalSearchResult[
       title: s.customer,
       subtitle: `${s.awb} • ${s.status}`,
       category: 'Shipment',
-      href: '/dashboard/shipments',
+      href: '/shipments',
     }));
 
   const pickupResults: GlobalSearchResult[] = mockPickups
@@ -55,7 +55,7 @@ export function searchAllEntities(query: string, limit = 8): GlobalSearchResult[
       title: p.customer,
       subtitle: `${p.id} • ${p.status}`,
       category: 'Pickup',
-      href: '/dashboard/pickups',
+      href: '/pickups',
     }));
 
   const rtoResults: GlobalSearchResult[] = mockRTOs
@@ -65,7 +65,7 @@ export function searchAllEntities(query: string, limit = 8): GlobalSearchResult[
       title: r.customer,
       subtitle: `${r.id} • ${r.status}`,
       category: 'RTO',
-      href: '/dashboard/rto',
+      href: '/rto',
     }));
 
   const exceptionResults: GlobalSearchResult[] = mockExceptions
@@ -75,7 +75,7 @@ export function searchAllEntities(query: string, limit = 8): GlobalSearchResult[
       title: e.id,
       subtitle: `${e.orderId} • ${e.reason}`,
       category: 'Exception',
-      href: '/dashboard/exceptions',
+      href: '/exceptions',
     }));
 
   const courierResults: GlobalSearchResult[] = mockCouriers
@@ -85,7 +85,7 @@ export function searchAllEntities(query: string, limit = 8): GlobalSearchResult[
       title: c.name,
       subtitle: `${c.successRate}% success • ${c.activeShipments} active`,
       category: 'Courier',
-      href: '/dashboard/couriers',
+      href: '/couriers',
     }));
 
   return [

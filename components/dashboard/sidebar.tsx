@@ -18,16 +18,16 @@ import {
 } from 'lucide-react';
 
 const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/dashboard/orders', label: 'Orders', icon: Package },
-  { href: '/dashboard/pickups', label: 'Pick up', icon: ArrowUpRight },
-  { href: '/dashboard/shipments', label: 'Shipments', icon: Truck },
-  { href: '/dashboard/exceptions', label: 'Exceptions', icon: AlertCircle },
-  { href: '/dashboard/rto', label: 'RTO', icon: RotateCcw },
-  { href: '/dashboard/couriers', label: 'Couriers', icon: Users },
-  { href: '/dashboard/analytics', label: 'Analytics', icon: BarChart3 },
-  { href: '/dashboard/billing', label: 'Billing', icon: CreditCard },
-  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/orders', label: 'Orders', icon: Package },
+  { href: '/pickups', label: 'Pick up', icon: ArrowUpRight },
+  { href: '/shipments', label: 'Shipments', icon: Truck },
+  { href: '/exceptions', label: 'Exceptions', icon: AlertCircle },
+  { href: '/rto', label: 'RTO', icon: RotateCcw },
+  { href: '/couriers', label: 'Couriers', icon: Users },
+  { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/billing', label: 'Billing', icon: CreditCard },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function Sidebar() {
@@ -57,7 +57,7 @@ export function Sidebar() {
         {navItems.map((item) => {
           const isActive =
             pathname === item.href ||
-            (item.href !== '/dashboard' && pathname.startsWith(item.href));
+            (item.href !== '/' && pathname.startsWith(item.href));
           const Icon = item.icon;
 
           return (

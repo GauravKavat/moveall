@@ -1,21 +1,3 @@
-'use client';
-
-import {
-  BarChart,
-  Bar,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from 'recharts';
-
 const deliverySuccessData = [
   { date: 'Mon', success: 92, failed: 8 },
   { date: 'Tue', success: 94, failed: 6 },
@@ -47,85 +29,102 @@ const statusDistributionData = [
   { name: 'Pending', value: 249, color: '#eab308' },
 ];
 
-const COLORS = ['#22c55e', '#3b82f6', '#eab308', '#f97316', '#ef4444'];
+const totalStatus = statusDistributionData.reduce((sum, item) => sum + item.value, 0);
+const rtoMax = Math.max(...rtoTrendData.map((item) => item.rto));
+const courierMax = Math.max(...courierComparisonData.map((item) => item.deliveries));
+
+function RtoLineChart() {
+  const points = rtoTrendData
+    .map((item, index) => {
+      const x = 20 + index * 86;
+      const y = 170 - (item.rto / rtoMax) * 120;
+
+      return `${x},${y}`;
+    })
+    .join(' ');
+
+  return (
+    <svg viewBox="0 0 300 190" className="h-72 w-full" role="img" aria-label="RTO rate trend">
+      <line x1="20" y1="170" x2="280" y2="170" className="stroke-border" />
+      <line x1="20" y1="30" x2="20" y2="170" className="stroke-border" />
+      <polyline points={points} fill="none" stroke="#f97316" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+      {rtoTrendData.map((item, index) => {
+        const x = 20 + index * 86;
+        const y = 170 - (item.rto / rtoMax) * 120;
+
+        return (
+          <g key={item.date}>
+            <circle cx={x} cy={y} r="5" fill="#f97316" />
+            <text x={x} y="188" textAnchor="middle" className="fill-muted-foreground text-[10px]">
+              {item.date}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
 
 export function AnalyticsCharts() {
   return (
     <div className="space-y-6">
-      {/* Delivery Success Rate */}
       <div className="rounded-lg border border-border bg-card p-6">
         <h3 className="mb-4 text-sm font-semibold">Delivery Success Rate</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={deliverySuccessData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="success" fill="#22c55e" name="Successful" />
-            <Bar dataKey="failed" fill="#ef4444" name="Failed" />
-          </BarChart>
-        </ResponsiveContainer>
+        <div className="flex h-72 items-end gap-3">
+          {deliverySuccessData.map((item) => (
+            <div key={item.date} className="flex min-w-0 flex-1 flex-col items-center gap-2">
+              <div className="flex h-56 w-full max-w-12 flex-col justify-end overflow-hidden rounded-md bg-muted">
+                <div className="bg-red-500" style={{ height: `${item.failed}%` }} />
+                <div className="bg-green-500" style={{ height: `${item.success}%` }} />
+              </div>
+              <span className="text-xs text-muted-foreground">{item.date}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* RTO Trend */}
       <div className="rounded-lg border border-border bg-card p-6">
         <h3 className="mb-4 text-sm font-semibold">RTO Rate Trend</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={rtoTrendData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="rto"
-              stroke="#f97316"
-              strokeWidth={2}
-              dot={{ fill: '#f97316', r: 5 }}
-              name="RTO %"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+        <RtoLineChart />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Courier Comparison */}
         <div className="rounded-lg border border-border bg-card p-6">
           <h3 className="mb-4 text-sm font-semibold">Courier Deliveries</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={courierComparisonData} layout="vertical">
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis type="number" />
-              <YAxis dataKey="name" type="category" width={80} />
-              <Tooltip />
-              <Bar dataKey="deliveries" fill="#3b82f6" />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="space-y-4">
+            {courierComparisonData.map((item) => (
+              <div key={item.name} className="grid grid-cols-[92px_1fr_52px] items-center gap-3">
+                <span className="truncate text-xs text-muted-foreground">{item.name}</span>
+                <div className="h-3 overflow-hidden rounded-full bg-muted">
+                  <div className="h-full rounded-full bg-blue-500" style={{ width: `${(item.deliveries / courierMax) * 100}%` }} />
+                </div>
+                <span className="text-right text-xs font-medium">{item.deliveries}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Status Distribution */}
         <div className="rounded-lg border border-border bg-card p-6">
           <h3 className="mb-4 text-sm font-semibold">Order Status Distribution</h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={statusDistributionData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, value }) => `${name}: ${value}`}
-                outerRadius={80}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {statusDistributionData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+          <div className="space-y-4">
+            {statusDistributionData.map((item) => (
+              <div key={item.name} className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span>{item.name}</span>
+                  <span className="font-medium">{item.value}</span>
+                </div>
+                <div className="h-3 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${(item.value / totalStatus) * 100}%`,
+                      backgroundColor: item.color,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

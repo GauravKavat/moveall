@@ -1,12 +1,20 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import { Package, Plus, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { mockPickups } from '@/lib/mock-data';
-import { CreatePickupModal } from '@/components/dashboard/create-pickup-modal';
 import { PickupsTable } from '@/components/dashboard/pickups-table';
 import { PickupRequest } from '@/lib/types';
+
+const CreatePickupModal = dynamic(
+  () =>
+    import('@/components/dashboard/create-pickup-modal').then(
+      (mod) => mod.CreatePickupModal,
+    ),
+  { ssr: false },
+);
 
 export default function PickupsPage() {
   const [pickups, setPickups] = useState<PickupRequest[]>(mockPickups);
@@ -117,11 +125,13 @@ export default function PickupsPage() {
       )}
 
       {/* Create Pickup Modal */}
-      <CreatePickupModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleCreatePickup}
-      />
+      {isModalOpen && (
+        <CreatePickupModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={handleCreatePickup}
+        />
+      )}
     </div>
   );
 }

@@ -1,8 +1,10 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { ThemeProvider } from '@/components/theme-provider'
-import { Toaster } from '@/components/ui/toaster'
+import { Header } from '@/components/dashboard/header'
+import { ChatbotLoader } from '@/components/dashboard/chatbot-loader'
+import { ToasterLoader } from '@/components/ui/toaster-loader'
 import './globals.css'
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -29,11 +31,12 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-icon.png',
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 }
 
 export default function RootLayout({
@@ -45,8 +48,16 @@ export default function RootLayout({
     <html lang="en" className="bg-background" suppressHydrationWarning>
       <body className="font-sans antialiased">
         <ThemeProvider>
-          {children}
-          <Toaster />
+          <div className="min-h-screen w-full overflow-x-hidden bg-background">
+            <Header />
+            <main className="flex-1">
+              <div className="w-full max-w-full px-3 py-6 sm:px-6 sm:py-10 lg:px-8 lg:py-12">
+                {children}
+              </div>
+            </main>
+            <ChatbotLoader />
+          </div>
+          <ToasterLoader />
         </ThemeProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

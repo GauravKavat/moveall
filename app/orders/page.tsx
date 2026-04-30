@@ -1,12 +1,20 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { OrdersTable } from '@/components/dashboard/orders-table';
 import { mockOrders } from '@/lib/mock-data';
 import { Button } from '@/components/ui/button';
 import { Plus, Download } from 'lucide-react';
 import { useState } from 'react';
-import { CreateOrderModal } from '@/components/dashboard/create-order-modal';
 import { toast } from '@/hooks/use-toast';
+
+const CreateOrderModal = dynamic(
+  () =>
+    import('@/components/dashboard/create-order-modal').then(
+      (mod) => mod.CreateOrderModal,
+    ),
+  { ssr: false },
+);
 
 export default function OrdersPage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -58,7 +66,9 @@ export default function OrdersPage() {
       {/* Table */}
       <OrdersTable orders={mockOrders} />
 
-      <CreateOrderModal open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+      {isCreateOpen && (
+        <CreateOrderModal open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+      )}
     </div>
   );
 }

@@ -10,6 +10,13 @@ interface ActivityFeedProps {
   activities: Activity[];
 }
 
+const formatActivityTime = (timestamp: Date) => {
+  const hours = String(timestamp.getHours()).padStart(2, '0');
+  const minutes = String(timestamp.getMinutes()).padStart(2, '0');
+
+  return `${hours}:${minutes}`;
+};
+
 export function ActivityFeed({ activities }: ActivityFeedProps) {
   const getIcon = (type: Activity['type']) => {
     const iconProps = 'h-4 w-4';
@@ -39,10 +46,7 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
                 {activity.description}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                {activity.timestamp.toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
+                {formatActivityTime(activity.timestamp)}
               </p>
             </div>
           </div>
