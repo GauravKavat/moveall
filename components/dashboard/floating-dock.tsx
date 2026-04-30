@@ -58,7 +58,7 @@ export function FloatingDock() {
                     : 'hover:bg-primary-foreground/10'
                 }`}
               >
-                <Icon className="h-5 w-5 flex-shrink-0" />
+                <Icon className="h-5 w-5 shrink-0" />
                 <span>{item.label}</span>
               </Link>
             );

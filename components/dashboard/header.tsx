@@ -114,7 +114,7 @@ export function Header() {
             >
               <Menu className="h-5 w-5 text-muted-foreground" />
             </button>
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary sm:h-10 sm:w-10">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary sm:h-10 sm:w-10">
               <span className="text-lg font-bold text-primary-foreground">M</span>
             </div>
             <div className="min-w-0">
@@ -123,9 +123,9 @@ export function Header() {
             </div>
           </div>
 
-          <div ref={searchRef} className="relative hidden flex-1 md:flex md:min-w-[420px] md:mx-6 lg:mx-10 lg:ml-8">
+          <div ref={searchRef} className="relative hidden flex-1 md:flex md:min-w-105 md:mx-6 lg:mx-10 lg:ml-8">
             <div className="flex w-full items-center gap-3 rounded-lg bg-muted px-5 py-2.5">
-              <Search className="h-4 w-4 flex-shrink-0 text-muted-foreground" />
+              <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder="Search orders, shipments, pickups, RTO, exceptions, couriers..."
@@ -173,7 +173,7 @@ export function Header() {
             )}
           </div>
 
-          <div className="flex flex-shrink-0 items-center gap-1 sm:gap-3">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-3">
             <button
               className="rounded-lg p-2 transition-colors hover:bg-muted md:hidden"
               onClick={() =>
@@ -305,7 +305,7 @@ export function Header() {
                       : 'text-sidebar-foreground hover:bg-sidebar-accent/50'
                   }`}
                 >
-                  <Icon className="h-5 w-5 flex-shrink-0" />
+                  <Icon className="h-5 w-5 shrink-0" />
                   <span>{item.label}</span>
                 </Link>
               );
